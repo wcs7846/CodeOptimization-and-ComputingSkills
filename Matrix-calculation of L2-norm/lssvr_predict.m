@@ -16,20 +16,15 @@ function [ y_pred ] = lssvr_predict( x_input, x_train, alfa, bias, g )
 if nargin < 4
     g = 0.01;
 end
-x_lenght = length(x_input);
-xs_lenght=length(x_train);
+x_length = length(x_input);
+xs_length=length(x_train);
 
-q=zeros(xs_lenght,1);% Storage variable
+A = x_input'*x_train;
+M  = diag(diag(x_input'*x_input))*ones(x_length,xs_length);
+M2 = ones(x_length,xs_length)*diag(diag(x_train'*x_train));
+A=M+M2-2*A;
+A = exp(-g*A);
 
-for j=1:x_lenght
-   
- for i=1:xs_lenght
-    
-     q(i,1)=alfa(i,1).*exp(-g*(x_input(:,j)-x_train(:,i))^2); % Gaussian kernel function
-   
- end
-     y_pred(j,1)=sum(q)+bias;
-end
-
+y_pred = A*alfa+bias;
 end
 
